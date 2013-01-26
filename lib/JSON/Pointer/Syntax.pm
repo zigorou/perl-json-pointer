@@ -63,11 +63,11 @@ sub tokenize {
 sub as_pointer {
     my ($class, $tokens) = @_;
 
-    return "/" . join(
+    return @$tokens > 0 ? "/" . join(
         "/", 
-        map { escaped_reference_token($_) }
+        map { escape_reference_token($_) }
         @$tokens
-    );
+    ) : "";
 
 }
 

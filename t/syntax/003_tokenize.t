@@ -1,6 +1,7 @@
 #!perl -w
 use strict;
 use Test::More;
+use Test::Exception;
 use JSON::Pointer::Syntax;
 
 sub test_tokenize {
@@ -9,7 +10,12 @@ sub test_tokenize {
     is_deeply($actual, $expect, $desc);
 }
 
-subtest "JSON Pointer Section examples" => sub {
+sub test_tokenize_exception {
+    my ($pointer, $desc) = @_;
+    throws_ok { JSON::Pointer::Syntax->tokenize($pointer); } "JSON::Pointer::Exception", $desc;
+}
+
+subtest "JSON Pointer Section 5 examples" => sub {
     test_tokenize('', [], q{""});
     test_tokenize('/foo', ['foo'], q{"/foo"});
     test_tokenize('/foo/0', ['foo', 0], q{"/foo/0"});
@@ -22,6 +28,12 @@ subtest "JSON Pointer Section examples" => sub {
     test_tokenize('/k"l', ['k"l'], q{"/k\"l"});
     test_tokenize('/ ', [' '], q{"/ "});
     test_tokenize('/m~0n', ['m~n'], q{"/m~0n"});
+};
+
+subtest "Exceptions" => sub {
+    test_tokenize_exception("~", q{"~"});
+    test_tokenize_exception("##", q{"##"});
+    test_tokenize_exception(" ", q{" "});
 };
 
 done_testing;
