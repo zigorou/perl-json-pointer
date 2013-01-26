@@ -1,0 +1,28 @@
+---
+abstract: 'A Perl implementation of JSON Pointer'
+author:
+  - 'Toru Yamaguchi <zigorou at cpan.org>'
+build_requires:
+  ExtUtils::MakeMaker: 6.36
+  Test::More: 0.88
+  Test::Requires: 0.06
+configure_requires:
+  ExtUtils::MakeMaker: 6.36
+distribution_type: module
+dynamic_config: 1
+generated_by: 'Module::Install version 1.06'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+module_name: JSON::Pointer
+name: JSON-Pointer
+no_index:
+  directory:
+    - inc
+    - t
+    - xt
+resources:
+  license: http://dev.perl.org/licenses/
+  repository: origin
+version: 0.01
