@@ -47,9 +47,4 @@ sub next_process {
     push(@{$self->{processed_tokens}}, $self->{last_token});
 }
 
-sub parent_type {
-    my $self = shift;
-    return ref $self->{parent};
-}
-
 1;

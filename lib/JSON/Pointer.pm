@@ -16,7 +16,7 @@ sub traverse {
     my ($class, $document, $pointer, $use_strict) = @_;
     $use_strict = 1 unless defined $use_strict;
 
-    my @tokens = JSON::Pointer::Syntax->tokenize($pointer);
+    my @tokens  = JSON::Pointer::Syntax->tokenize($pointer);
     my $context = JSON::Pointer::Context->new(+{
         pointer => $pointer,
         tokens  => \@tokens,
@@ -26,8 +26,9 @@ sub traverse {
 
     foreach my $token (@tokens) {
         $context->start_process($token);
-        my $type = $context->parent_type;
+
         my $parent = $context->parent;
+        my $type   = ref $parent;
 
         if ($type eq "HASH") {
             unless (exists $parent->{$token}) {
@@ -83,8 +84,10 @@ sub contains {
 
 sub add {
     my ($class, $document, $pointer, $value) = @_;
+
     my $context = $class->traverse($document, $pointer, 0);
-    my $type = $context->parent_type;
+    my $parent  = $context->parent;
+    my $type    = ref $parent;
 
     if ($type eq "HASH") {
         if (!$context->result && @{$context->processed_tokens} < @{$context->tokens} - 1) {
@@ -95,7 +98,7 @@ sub add {
             );
         }
 
-        $context->parent->{$context->last_token} = $value;
+        $parent->{$context->last_token} = $value;
         return 1;
     }
     else {
@@ -106,56 +109,60 @@ sub add {
             );
         }
 
-        my $parent_array        = $context->parent;
-        my $parent_array_length = $#{$parent_array} + 1;
+        my $parent_array_length = $#{$parent} + 1;
         my $target_index        = ($context->last_token eq "-") ? 
             $parent_array_length : $context->last_token;
 
-        splice(@$parent_array, $target_index, 0, $value);
+        splice(@$parent, $target_index, 0, $value);
         return 1;
     }
 }
 
 sub remove {
     my ($class, $document, $pointer) = @_;
+
     my $context = $class->traverse($document, $pointer, 1);
-    my $type = $context->parent_type;
+    my $parent  = $context->parent;
+    my $type    = ref $parent;
 
     if ($type eq "HASH") {
-        my $parent_object = $context->parent;
         my $target_member = $context->last_token;
-        my $old_value = delete $parent_object->{$target_member};
+        my $old_value = delete $parent->{$target_member};
+
         return $old_value;
     }
     else {
-        my $parent_array        = $context->parent;
-        my $parent_array_length = $#{$parent_array} + 1;
+        my $parent_array_length = $#{$parent} + 1;
         my $target_index        = ($context->last_token eq "-") ? 
             $parent_array_length : $context->last_token;
 
-        my $old_value = splice(@$parent_array, $target_index, 1);
+        my $old_value = splice(@$parent, $target_index, 1);
+
         return $old_value;
     }
 }
 
 sub replace {
     my ($class, $document, $pointer, $value) = @_;
+
     my $context = $class->traverse($document, $pointer, 1);
-    my $type = $context->parent_type;
+    my $parent  = $context->parent;
+    my $type    = ref $parent;
 
     if ($type eq "HASH") {
-        my $old_value = $context->parent->{$context->last_token};
-        $context->parent->{$context->last_token} = $value;
+        my $old_value = $parent->{$context->last_token};
+        $parent->{$context->last_token} = $value;
+
         return $old_value;
     }
     else {
-        my $parent_array        = $context->parent;
-        my $parent_array_length = $#{$parent_array} + 1;
+        my $parent_array_length = $#{$parent} + 1;
         my $target_index        = ($context->last_token eq "-") ? 
             $parent_array_length : $context->last_token;
 
-        my $old_value = $parent_array->[$target_index];
-        $parent_array->[$target_index] = $value;
+        my $old_value = $parent->[$target_index];
+        $parent->[$target_index] = $value;
+
         return $old_value;
     }
 }
@@ -172,12 +179,13 @@ sub copy {
 
 sub test {
     my ($class, $document, $pointer, $value) = @_;
-    my $context = $class->traverse($document, $pointer, 1);
-    my $target = $context->target;
+
+    my $context     = $class->traverse($document, $pointer, 1);
+    my $target      = $context->target;
     my $target_type = ref $target;
 
     if ($target_type eq "HASH" || $target_type eq "ARRAY") {
-        return encode_json($context->target) eq encode_json($value) ? 1 : 0;
+        return encode_json($target) eq encode_json($value) ? 1 : 0;
     }
     elsif (defined $target) {
         if (JSON::is_bool($target)) {
