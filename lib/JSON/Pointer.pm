@@ -3,12 +3,12 @@ package JSON::Pointer;
 use strict;
 use warnings;
 
+use B;
 use Carp qw(croak);
 use JSON qw(encode_json decode_json);
 use JSON::Pointer::Context;
 use JSON::Pointer::Exception qw(:all);
 use JSON::Pointer::Syntax qw(is_array_numeric_index);
-use Scalar::Util qw(looks_like_number);
 use URI::Escape qw(uri_unescape);
 
 our $VERSION = '0.01';
@@ -194,11 +194,14 @@ sub test {
         if (JSON::is_bool($target)) {
             return JSON::is_bool($value) && $target == $value ? 1 : 0;
         }
-        elsif (looks_like_number($target)) {
+        elsif (_is_iv_or_nv($target) && _is_iv_or_nv($value)) {
             return $target == $value ? 1 : 0;
         }
-        else {
+        elsif (_is_pv($target) && _is_pv($value)) {
             return $target eq $value ? 1 : 0;
+        }
+        else {
+            return 0;
         }
     }
     else {
@@ -219,6 +222,18 @@ sub _throw_or_return {
         $context->last_error($code);
         return $context;
     }
+}
+
+sub _is_iv_or_nv {
+    my $value = shift;
+    my $flags = B::svref_2object(\$value)->FLAGS;
+    return ($flags & ( B::SVp_IOK | B::SVp_NOK )) and !($flags & B::SVp_POK);
+}
+
+sub _is_pv {
+    my $value = shift;
+    my $flags = B::svref_2object(\$value)->FLAGS;
+    return !($flags & ( B::SVp_IOK | B::SVp_NOK )) and ($flags & B::SVp_POK);
 }
 
 1;

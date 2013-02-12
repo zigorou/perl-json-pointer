@@ -4,13 +4,13 @@ use warnings;
 use Test::More;
 use JSON::Pointer;
 
-sub test_remove {
+sub test_replace {
     my ($desc, %specs) = @_;
     my ($input, $expect) = @specs{qw/input expect/};
 
     subtest $desc => sub {
-        my ($document, $pointer) = @$input{qw/document pointer/};
-        my $actual = JSON::Pointer->remove($document, $pointer);
+        my ($document, $pointer, $value) = @$input{qw/document pointer value/};
+        my $actual = JSON::Pointer->replace($document, $pointer, $value);
         is_deeply($actual, $expect->{target}, "target");
         is_deeply($document, $expect->{document}, "document");
     };
@@ -19,33 +19,20 @@ sub test_remove {
 # https://github.com/json-patch/json-patch-tests
 
 subtest "JSON Patch Appendix A. Example" => sub {
-    test_remove "A.3 Removing an Object Member" => (
+    test_replace "A.5 Replacing a Value" => (
         input => +{
             document => +{
                 baz => "qux",
                 foo => "bar",
             },
             pointer => "/baz",
+            value => "boo",
         },
         expect => +{
             target => "qux",
             document => +{
-               foo => "bar"
-            }
-        },
-    );
-
-    test_remove "A.4 Removing an Array Element" => (
-        input => +{
-            document => +{
-                foo => ["bar", "qux", "baz"],
-            },
-            pointer => "/foo/1",
-        },
-        expect => +{
-            target => "qux",
-            document => +{
-               foo => ["bar", "baz"]
+                baz => "boo",
+                foo => "bar"
             }
         },
     );
