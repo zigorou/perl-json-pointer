@@ -9,12 +9,14 @@ use JSON::Pointer::Context;
 use JSON::Pointer::Exception qw(:all);
 use JSON::Pointer::Syntax qw(is_array_numeric_index);
 use Scalar::Util qw(looks_like_number);
+use URI::Escape qw(uri_unescape);
 
 our $VERSION = '0.01';
 
 sub traverse {
     my ($class, $document, $pointer, $strict) = @_;
     $strict = 1 unless defined $strict;
+    $pointer = uri_unescape($pointer);
 
     my @tokens  = JSON::Pointer::Syntax->tokenize($pointer);
     my $context = JSON::Pointer::Context->new(+{
@@ -63,11 +65,12 @@ sub traverse {
 }
 
 sub get {
-    my ($class, $document, $pointer) = @_;
+    my ($class, $document, $pointer, $strict) = @_;
+    $strict = 0 unless defined $strict;
 
     my $context;
     eval {
-        $context = $class->traverse($document, $pointer, 1);
+        $context = $class->traverse($document, $pointer, $strict);
     };
     if (my $e = $@) {
         croak $e;
