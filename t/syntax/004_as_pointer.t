@@ -23,3 +23,5 @@ subtest "JSON Pointer Section 5 examples" => sub {
     test_as_pointer([' '], '/ ', q{"/ "});
     test_as_pointer(['m~n'], '/m~0n', q{"/m~0n"});
 };
+
+done_testing;

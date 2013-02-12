@@ -13,8 +13,8 @@ use Scalar::Util qw(looks_like_number);
 our $VERSION = '0.01';
 
 sub traverse {
-    my ($class, $document, $pointer, $use_strict) = @_;
-    $use_strict = 1 unless defined $use_strict;
+    my ($class, $document, $pointer, $strict) = @_;
+    $strict = 1 unless defined $strict;
 
     my @tokens  = JSON::Pointer::Syntax->tokenize($pointer);
     my $context = JSON::Pointer::Context->new(+{
@@ -25,36 +25,36 @@ sub traverse {
     });
 
     foreach my $token (@tokens) {
-        $context->start_process($token);
+        $context->begin($token);
 
         my $parent = $context->parent;
         my $type   = ref $parent;
 
         if ($type eq "HASH") {
             unless (exists $parent->{$token}) {
-                return _throw_or_return(ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE, $context, $use_strict);
+                return _throw_or_return(ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE, $context, $strict);
             }
 
-            $context->next_process($parent->{$token});
+            $context->next($parent->{$token});
             next;
         }
         elsif ($type eq "ARRAY") {
             my $elements_length = $#{$parent} + 1;
 
             if (is_array_numeric_index($token) && $token <= $elements_length) {
-                $context->next_process($parent->[$token]);
+                $context->next($parent->[$token]);
                 next;
             }
             elsif ($token eq "-") {
-                $context->next_process(undef);
+                $context->next(undef);
                 next;
             }
             else {
-                return _throw_or_return(ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE, $context, $use_strict);
+                return _throw_or_return(ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE, $context, $strict);
             }
         }
         else {
-            return _throw_or_return(ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE, $context, $use_strict);
+            return _throw_or_return(ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE, $context, $strict);
         }
     }
 
@@ -204,9 +204,9 @@ sub test {
 }
 
 sub _throw_or_return {
-    my ($code, $context, $use_strict) = @_;
+    my ($code, $context, $strict) = @_;
 
-    if ($use_strict) {
+    if ($strict) {
         JSON::Pointer::Exception->throw(
             code    => $code,
             context => $context,

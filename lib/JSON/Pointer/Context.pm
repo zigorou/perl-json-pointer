@@ -34,14 +34,14 @@ sub new {
     bless $args => $class;
 }
 
-sub start_process {
+sub begin {
     my ($self, $token) = @_;
     $self->{last_token} = $token;
     ### assign before target into parent
     $self->{parent} = $self->{target};
 }
 
-sub next_process {
+sub next {
     my ($self, $target) = @_;
     $self->{target} = $target;
     push(@{$self->{processed_tokens}}, $self->{last_token});
