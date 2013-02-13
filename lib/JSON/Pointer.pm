@@ -88,7 +88,9 @@ sub contains {
 sub add {
     my ($class, $document, $pointer, $value) = @_;
 
-    my $context = $class->traverse($document, $pointer, 0);
+    my $patched_document = _clone($document);
+
+    my $context = $class->traverse($patched_document, $pointer, 0);
     my $parent  = $context->parent;
     my $type    = ref $parent;
 
@@ -101,8 +103,15 @@ sub add {
             );
         }
 
-        $parent->{$context->last_token} = $value;
-        return 1;
+        if (defined $context->last_token) {
+            $parent->{$context->last_token} = $value;
+        }
+        else {
+            ### pointer is empty string (whole document)
+            $patched_document = $value;
+        }
+
+        return $patched_document;
     }
     else {
         unless ($context->result) {
@@ -112,12 +121,18 @@ sub add {
             );
         }
 
-        my $parent_array_length = $#{$parent} + 1;
-        my $target_index        = ($context->last_token eq "-") ? 
-            $parent_array_length : $context->last_token;
+        if (defined $context->last_token) {
+            my $parent_array_length = $#{$parent} + 1;
+            my $target_index        = ($context->last_token eq "-") ? 
+                $parent_array_length : $context->last_token;
 
-        splice(@$parent, $target_index, 0, $value);
-        return 1;
+            splice(@$parent, $target_index, 0, $value);
+        }
+        else {
+            $patched_document = $value;
+        }
+
+        return $patched_document;
     }
 }
 
@@ -222,6 +237,10 @@ sub _throw_or_return {
         $context->last_error($code);
         return $context;
     }
+}
+
+sub _clone {
+    decode_json(encode_json(shift));
 }
 
 sub _is_iv_or_nv {
