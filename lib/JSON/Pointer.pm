@@ -5,6 +5,7 @@ use warnings;
 
 use B;
 use Carp qw(croak);
+use Data::Clone qw(clone);
 use JSON qw(encode_json decode_json);
 use JSON::Pointer::Context;
 use JSON::Pointer::Exception qw(:all);
@@ -88,7 +89,7 @@ sub contains {
 sub add {
     my ($class, $document, $pointer, $value) = @_;
 
-    my $patched_document = _clone($document);
+    my $patched_document = clone($document);
 
     my $context = $class->traverse($patched_document, $pointer, 0);
     my $parent  = $context->parent;
@@ -139,24 +140,35 @@ sub add {
 sub remove {
     my ($class, $document, $pointer) = @_;
 
-    my $context = $class->traverse($document, $pointer, 1);
+    my $patched_document = clone($document);
+
+    my $context = $class->traverse($patched_document, $pointer, 1);
     my $parent  = $context->parent;
     my $type    = ref $parent;
 
     if ($type eq "HASH") {
         my $target_member = $context->last_token;
-        my $old_value = delete $parent->{$target_member};
-
-        return $old_value;
+        if (defined $target_member) {
+            my $removed = delete $parent->{$target_member};
+            return wantarray ? ($patched_document, $removed) : $patched_document;
+        }
+        else {
+            ### pointer is empty string (whole document)
+            return wantarray ? (undef, $patched_document) : undef;
+        }
     }
     else {
-        my $parent_array_length = $#{$parent} + 1;
-        my $target_index        = ($context->last_token eq "-") ? 
-            $parent_array_length : $context->last_token;
-
-        my $old_value = splice(@$parent, $target_index, 1);
-
-        return $old_value;
+        my $target_index = $context->last_token;
+        if (defined $target_index) {
+            my $parent_array_length = $#{$parent} + 1;
+            $target_index = $parent_array_length if ($target_index eq "-");
+            my $removed = splice(@$parent, $target_index, 1);
+            return wantarray ? ($patched_document, $removed) : $patched_document;
+        }
+        else {
+            ### pointer is empty string (whole document)
+            return wantarray ? (undef, $patched_document) : undef;
+        }
     }
 }
 
@@ -237,10 +249,6 @@ sub _throw_or_return {
         $context->last_error($code);
         return $context;
     }
-}
-
-sub _clone {
-    decode_json(encode_json(shift));
 }
 
 sub _is_iv_or_nv {
