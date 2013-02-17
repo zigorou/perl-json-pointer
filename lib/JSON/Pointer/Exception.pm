@@ -119,7 +119,7 @@ Toru Yamaguchi E<lt>zigorou at cpan.orgE<gt>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (c) 2012, <<YOUR NAME HERE>>. All rights reserved.
+Copyright (c) 2013, Toru Yamaguchi. All rights reserved.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

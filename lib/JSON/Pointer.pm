@@ -319,30 +319,19 @@ This document describes JSON::Pointer version 0.01.
 
 =head1 SYNOPSIS
 
-  use JSON;
   use JSON::Pointer;
 
-  my $json = JSON->new->allow_nonref;
-  my $obj = $json->decode(<< 'JSON');
-  {
-     "foo": ["bar", "baz"],
-     "": 0,
-     "a/b": 1,
-     "c%d": 2,
-     "e^f": 3,
-     "g|h": 4,
-     "i\\j": 5,
-     "k\"l": 6,
-     " ": 7,
-     "m~n": 8
-  }
-  JSON
+  my $obj = {
+    foo => 1,
+    bar => [ { qux => "hello" }, 3 ],
+    baz => { boo => [ 1, 3, 5, 7 ] }
+  };
 
-  JSON::Pointer->get($obj, "/foo");   ### $obj->{foo}
-  JSON::Pointer->get($obj, "/foo/0"); ### $obj->{foo}[0]
-  JSON::Pointer->get($obj, "");       ### $obj
-  JSON::Pointer->get($obj, "/a~1b");  ### $obj->{"a/b"}
-  JSON::Pointer->get($obj, "/m~0n");  ### $obj->{"m~n}
+  JSON::Pointer->get($obj, "/foo");       ### $obj->{foo}
+  JSON::Pointer->get($obj, "/bar/0");     ### $obj->{bar}[0]
+  JSON::Pointer->get($obj, "/bar/0/qux"); ### $obj->{bar}[0]{qux}
+  JSON::Pointer->get($obj, "/bar/1");     ### $obj->{bar}[1]
+  JSON::Pointer->get($obj, "/baz/boo/2"); ### $obj->{baz}{boo}[2]
 
 =head1 DESCRIPTION
 
@@ -613,7 +602,7 @@ Toru Yamaguchi E<lt>zigorou at cpan.orgE<gt>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (c) 2012, <<YOUR NAME HERE>>. All rights reserved.
+Copyright (c) 2013, Toru Yamaguchi. All rights reserved.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

@@ -16,12 +16,12 @@ as per the usual:
 
     $ tar xzf JSON-Pointer-$version.tar.gz
     $ cd JSON-Pointer-$version
-    $ perl Makefile.PL
-    $ make && make test
+    $ perl Build.PL
+    $ ./Build && ./Build test
 
 Then install it:
 
-    $ make install
+    $ ./Build install
 
 DOCUMENTATION
 
