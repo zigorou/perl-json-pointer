@@ -77,11 +77,11 @@ This document describes JSON::Pointer::Exception version 0.01
 
 =head2 throw(%opts)
 
-=head2 code : Int
+=head2 code :Int
 
-=head2 context : JSON::Pointer::Context
+=head2 context :JSON::Pointer::Context
 
-=head2 to_string : Str
+=head2 to_string :Str
 
 =head1 CONSTANTS
 
@@ -104,12 +104,6 @@ to cpan-RT.
 =over
 
 =item L<perl>
-
-=item L<Mojo::JSON::Pointer>
-
-Many codes in this module is inspired by the module.
-
-=item L<http://tools.ietf.org/html/draft-ietf-appsawg-json-pointer-03>
 
 =back
 

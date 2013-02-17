@@ -70,7 +70,7 @@ This module is internal only.
 
 =head1 METHODS
 
-=head2 new(%args) : JSON::Pointer::Context
+=head2 new(%args) :JSON::Pointer::Context
 
 =head2 begin($token)
 

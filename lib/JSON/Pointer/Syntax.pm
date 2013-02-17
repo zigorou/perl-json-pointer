@@ -97,15 +97,15 @@ This module is internal only.
 
 =head1 FUNCTIONS
 
-=head2 escape_reference_token($unescaped_reference_token) : Str
+=head2 escape_reference_token($unescaped_reference_token :Str) :Str
 
-=head2 unescape_reference_token($escaped_reference_token) : Str
+=head2 unescape_reference_token($escaped_reference_token :Str) :Str
 
-=head2 tokenize($pointer) : Array or ArrayRef
+=head2 tokenize($pointer :Str) : Array/ArrayRef
 
-=head2 as_pointer(\@tokens) : Str
+=head2 as_pointer(\@tokens) :Str
 
-=head2 is_array_numeric_index($token) : Int
+=head2 is_array_numeric_index($token) :Int
 
 =head1 DEPENDENCIES
 
