@@ -1,28 +1,46 @@
 ---
 abstract: 'A Perl implementation of JSON Pointer'
 author:
-  - 'Toru Yamaguchi <zigorou at cpan.org>'
+  - unknown
 build_requires:
-  ExtUtils::MakeMaker: 6.36
-  Test::More: 0.88
-  Test::Requires: 0.06
+  Test::Exception: 0.31
+  Test::More: 0.98
 configure_requires:
-  ExtUtils::MakeMaker: 6.36
-distribution_type: module
-dynamic_config: 1
-generated_by: 'Module::Install version 1.06'
+  Module::Build: 0.4003
+dynamic_config: 0
+generated_by: 'Module::Build version 0.4003, CPAN::Meta::Converter version 2.112150'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
   version: 1.4
-module_name: JSON::Pointer
 name: JSON-Pointer
 no_index:
   directory:
     - inc
     - t
     - xt
+provides:
+  JSON::Pointer:
+    file: lib/JSON/Pointer.pm
+    version: 0.01
+  JSON::Pointer::Context:
+    file: lib/JSON/Pointer/Context.pm
+    version: 0.01
+  JSON::Pointer::Exception:
+    file: lib/JSON/Pointer/Exception.pm
+    version: 0.01
+  JSON::Pointer::Syntax:
+    file: lib/JSON/Pointer/Syntax.pm
+    version: 0.01
+requires:
+  B: 0
+  Carp: 0
+  Class::Accessor::Lite: 0.05
+  Data::Clone: 0.003
+  Exporter: 0
+  JSON: 2.53
+  URI::Escape: 3.31
+  perl: 5.008001
 resources:
   license: http://dev.perl.org/licenses/
-  repository: origin
 version: 0.01

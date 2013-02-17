@@ -36,3 +36,5 @@ xt/pod.t
 xt/podcoverage.t
 xt/podspell.t
 xt/podsynopsis.t
+LICENSE
+META.json

@@ -1,0 +1,73 @@
+{
+   "abstract" : "A Perl implementation of JSON Pointer",
+   "author" : [
+      "unknown"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Module::Build version 0.4003, CPAN::Meta::Converter version 2.112150",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "JSON-Pointer",
+   "no_index" : {
+      "directory" : [
+         "inc",
+         "t",
+         "xt"
+      ]
+   },
+   "prereqs" : {
+      "build" : {
+         "requires" : {
+            "Test::Exception" : "0.31",
+            "Test::More" : "0.98"
+         }
+      },
+      "configure" : {
+         "requires" : {
+            "Module::Build" : "0.4003"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "B" : 0,
+            "Carp" : 0,
+            "Class::Accessor::Lite" : "0.05",
+            "Data::Clone" : "0.003",
+            "Exporter" : 0,
+            "JSON" : "2.53",
+            "URI::Escape" : "3.31",
+            "perl" : "5.008001"
+         }
+      }
+   },
+   "provides" : {
+      "JSON::Pointer" : {
+         "file" : "lib/JSON/Pointer.pm",
+         "version" : "0.01"
+      },
+      "JSON::Pointer::Context" : {
+         "file" : "lib/JSON/Pointer/Context.pm",
+         "version" : "0.01"
+      },
+      "JSON::Pointer::Exception" : {
+         "file" : "lib/JSON/Pointer/Exception.pm",
+         "version" : "0.01"
+      },
+      "JSON::Pointer::Syntax" : {
+         "file" : "lib/JSON/Pointer/Syntax.pm",
+         "version" : "0.01"
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "license" : [
+         "http://dev.perl.org/licenses/"
+      ]
+   },
+   "version" : "0.01"
+}

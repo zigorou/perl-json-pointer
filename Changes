@@ -1,5 +1,4 @@
 Revision history for Perl extension JSON::Pointer
 
-NEXT <<SET RELEASE DATE HERE>>
-    - original version; created by dim
-      at Sat Jan 26 19:14:04 2013.
+0.01  Mon Feb 18 00:32:55 JST 2013
+    - original version
