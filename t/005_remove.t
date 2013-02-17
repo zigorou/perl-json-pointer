@@ -128,6 +128,17 @@ subtest "misc" => sub {
         },
     );
 
+    test_remove "remove whole document (string)" => (
+        input => +{
+            document => "foo",
+            pointer => "",
+        },
+        expect => +{
+            removed => "foo",
+            document => undef,
+        },
+    );
+
     test_remove "remove specified element from array" => (
         input => +{
             document => [0, 1, 2, 3],

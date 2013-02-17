@@ -1,5 +1,6 @@
 package JSON::Pointer::Exception;
 
+use 5.008_001;
 use strict;
 use warnings;
 use overload (
@@ -19,8 +20,8 @@ our %EXPORT_TAGS = (
     all => [ @EXPORT_OK ],
 );
 
-sub ERROR_INVALID_POINTER_SYNTAX                { 1; }
-sub ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE { 2; }
+sub ERROR_INVALID_POINTER_SYNTAX ()                { 1; }
+sub ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE () { 2; }
 
 our %MESSAGE_BUNDLES = (
     ERROR_INVALID_POINTER_SYNTAX() 
@@ -66,7 +67,7 @@ JSON::Pointer::Exception - Exception class for JSON::Pointer
 
 This document describes JSON::Pointer::Exception version 0.01
 
-=bead1 SYNOPSIS
+=head1 SYNOPSIS
 
 =head1 DESCRIPTION
 
@@ -78,15 +79,15 @@ This document describes JSON::Pointer::Exception version 0.01
 
 =head2 code : Int
 
-=head2 pointer : Str
+=head2 context : JSON::Pointer::Context
 
 =head2 to_string : Str
 
 =head1 CONSTANTS
 
-=head2 INVALID_POINTER_SYNTAX
+=head2 ERROR_INVALID_POINTER_SYNTAX
 
-=head2 POINTER_REFERENCES_NON_EXISTENT_VALUE
+=head2 ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE
 
 =head1 DEPENDENCIES
 

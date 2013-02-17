@@ -1,5 +1,6 @@
 package JSON::Pointer;
 
+use 5.008_001;
 use strict;
 use warnings;
 
@@ -114,7 +115,7 @@ sub add {
 
         return $patched_document;
     }
-    else {
+    elsif ($type eq "ARRAY") {
         unless ($context->result) {
             JSON::Pointer::Exception->throw(
                 code    => ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE,
@@ -134,6 +135,16 @@ sub add {
         }
 
         return $patched_document;
+    }
+    else {
+        unless ($context->result) {
+            JSON::Pointer::Exception->throw(
+                code    => ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE,
+                context => $context,
+            );
+        }
+
+        return $value;
     }
 }
 
@@ -157,7 +168,7 @@ sub remove {
             return wantarray ? (undef, $patched_document) : undef;
         }
     }
-    else {
+    elsif ($type eq "ARRAY") {
         my $target_index = $context->last_token;
         if (defined $target_index) {
             my $parent_array_length = $#{$parent} + 1;
@@ -170,30 +181,51 @@ sub remove {
             return wantarray ? (undef, $patched_document) : undef;
         }
     }
+    else {
+        unless ($context->result) {
+            JSON::Pointer::Exception->throw(
+                code    => ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE,
+                context => $context,
+            );
+        }
+
+        return wantarray ? (undef, $patched_document) : undef;
+    }
 }
 
 sub replace {
     my ($class, $document, $pointer, $value) = @_;
 
-    my $context = $class->traverse($document, $pointer, 1);
+    my $patched_document = clone($document);
+    my $context = $class->traverse($patched_document, $pointer, 1);
     my $parent  = $context->parent;
     my $type    = ref $parent;
 
     if ($type eq "HASH") {
-        my $old_value = $parent->{$context->last_token};
-        $parent->{$context->last_token} = $value;
-
-        return $old_value;
+        my $target_member = $context->last_token;
+        if (defined $target_member) {
+            my $replaced = $parent->{$context->last_token};
+            $parent->{$context->last_token} = $value;
+            return wantarray ? ($patched_document, $replaced) : $patched_document;
+        }
+        else {
+            ### pointer is empty string (whole document)
+            return wantarray ? ($value, $patched_document) : $value;
+        }
     }
     else {
-        my $parent_array_length = $#{$parent} + 1;
-        my $target_index        = ($context->last_token eq "-") ? 
-            $parent_array_length : $context->last_token;
-
-        my $old_value = $parent->[$target_index];
-        $parent->[$target_index] = $value;
-
-        return $old_value;
+        my $target_index = $context->last_token;
+        if (defined $target_index) {
+            my $parent_array_length = $#{$parent} + 1;
+            $target_index = $parent_array_length if ($target_index eq "-");
+            my $replaced = $parent->[$target_index];
+            $parent->[$target_index] = $value;
+            return wantarray ? ($patched_document, $replaced) : $patched_document;
+        }
+        else {
+            ### pointer is empty string (whole document)
+            return wantarray ? ($value, $patched_document) : $value;
+        }
     }
 }
 
@@ -207,10 +239,19 @@ sub copy {
     return $class->add($document, $to_pointer, $context->target);
 }
 
+sub move {
+    my ($class, $document, $from_pointer, $to_pointer) = @_;
+    my ($patched_document, $removed) = $class->remove($document, $from_pointer);
+    $class->add($patched_document, $to_pointer, $removed);
+}
+
 sub test {
     my ($class, $document, $pointer, $value) = @_;
 
-    my $context     = $class->traverse($document, $pointer, 1);
+    my $context = $class->traverse($document, $pointer, 0);
+
+    return 0 unless $context->result;
+
     my $target      = $context->target;
     my $target_type = ref $target;
 
@@ -232,6 +273,7 @@ sub test {
         }
     }
     else {
+        ### null
         return !defined $value ? 1 : 0;
     }
 }
@@ -300,53 +342,35 @@ This document describes JSON::Pointer version 0.01.
 
 =head1 DESCRIPTION
 
-This library implements JSON Pointer draft-05 (http://tools.ietf.org/html/draft-ietf-appsawg-json-pointer-05).
-JSON Pointer can access by the way like XPath for JSON data format.
-Please see the specification for details.
+This library is implemented JSON Pointer draft-09 (http://tools.ietf.org/html/draft-ietf-appsawg-json-pointer-09) and 
+some useful operator from JSON Patch draft-10 (http://tools.ietf.org/html/draft-ietf-appsawg-json-patch-10).
+
+JSON Pointer is available to identify a specified value, and it is simillar to XPath.
+Please see the both of specifications for details.
 
 =head1 METHODS
 
-=head2 contains($obj, $pointer) : Int
+=head2 traverse($document, $pointer, $strict) : JSON::Pointer::Context
 
-This method is checking which the value pointerd by json pointer is exists or not.
-For example, $obj is same value in L<SYNOPSIS>.
+=head2 get($document, $pointer, $strict) : Scalar
 
-    my $rv1 = JSON::Pointer->contains($obj, "/foo/0");
-    my $rv2 = JSON::Pointer->contains($obj, "/foo/2");
+=head2 contains($document, $pointer) : Int
 
-In this situation, $orig_value equals 1 (true), $new_value equals 0 (false).
+=head2 add($document, $pointer, $value) : Scalar
 
-=head2 get($obj, $pointer) : Scalar
+=head2 remove($document, $pointer) : Array or Scalar
 
-This method is retrieving value pointed by json pointer.
+=head2 replace($document, $pointer, $value) : Arrary or Scalar
 
-If you specified scalar context as left value, then this method will return only value pointed by json pointer.
-For example, $obj is same value in L<SYNOPSIS>.
+=head2 set($document, $pointer, $value) : Array or Scalar
 
-    my $target = JSON::Pointer->get($obj, "/foo/0");
-    ### $target = "bar"
+This method is alias of replace.
 
-And if you specified array context as left value, this method will return value on first argument and parent value on second argument. For example,
+=head2 copy($document, $from_pointer, $to_pointer) : Scalar
 
-    my ($target, $parent) = JSON::Pointer->get($obj, "/foo/0");
-    ### $target = "bar"
-    ### $parent = ["bar", "baz"]
+=head2 move($document, $from_pointer, $to_pointer) : Scalar
 
-=head2 set($obj, $pointer, $value) : Scalar
-
-This method is replacing value pointed by json pointer.
-
-For example, $obj is same value in L<SYNOPSIS>.
-
-   my $orig_value = JSON::Pointer->set($obj, "/foo/0", "blah");
-   my $new_value = JSON::Pointer->get($obj, "/foo/0");
-
-In this situation, $orig_value equals "bar", $new_value equals "blah".
-
-=head2 tokenize($pointer) : Array | ArrayRef
-
-This method tokenize JSON Pointer string.
-Return array contains each pathes.
+=head2 test($document, $pointer, $value) : Int
 
 =head1 DEPENDENCIES
 

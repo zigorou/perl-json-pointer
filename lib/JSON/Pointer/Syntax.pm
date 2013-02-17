@@ -1,5 +1,6 @@
 package JSON::Pointer::Syntax;
 
+use 5.008_001;
 use strict;
 use warnings;
 
@@ -20,21 +21,21 @@ our $REGEX_REFERENCE_TOKEN = qr{(?:$REGEX_ESCAPED|$REGEX_UNESCAPED)*};
 our $REGEX_ARRAY_INDEX     = qr{(?:0|[1-9][0-9]*)};
 
 sub escape_reference_token {
-    my $escaped_reference_token = shift;
+    my $unescaped_reference_token = shift;
 
-    $escaped_reference_token =~ s/~/~0/g;
-    $escaped_reference_token =~ s/\x2F/~1/g;
+    $unescaped_reference_token =~ s/~/~0/g;
+    $unescaped_reference_token =~ s/\x2F/~1/g;
 
-    return $escaped_reference_token;
+    return $unescaped_reference_token;
 }
 
 sub unescape_reference_token {
-    my $unescaped_reference_token = shift;
+    my $escaped_reference_token = shift;
 
-    $unescaped_reference_token =~ s/~1/\x2F/g;
-    $unescaped_reference_token =~ s/~0/~/g;
+    $escaped_reference_token =~ s/~1/\x2F/g;
+    $escaped_reference_token =~ s/~0/~/g;
 
-    return $unescaped_reference_token;
+    return $escaped_reference_token;
 }
 
 sub tokenize {
@@ -77,3 +78,64 @@ sub is_array_numeric_index {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+JSON::Pointer::Syntax - JSON Pointer syntax functions
+
+=head1 VERSION
+
+This document describes JSON::Pointer::Syntax version 0.01.
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+This module is internal only.
+
+=head1 FUNCTIONS
+
+=head2 escape_reference_token($unescaped_reference_token) : Str
+
+=head2 unescape_reference_token($escaped_reference_token) : Str
+
+=head2 tokenize($pointer) : Array or ArrayRef
+
+=head2 as_pointer(\@tokens) : Str
+
+=head2 is_array_numeric_index($token) : Int
+
+=head1 DEPENDENCIES
+
+Perl 5.8.1 or later.
+
+=head1 BUGS
+
+All complex software has bugs lurking in it, and this module is no
+exception. If you find a bug please either email me, or add the bug
+to cpan-RT.
+
+=head1 SEE ALSO
+
+=over
+
+=item L<perl>
+
+=item L<Class::Accessor::Lite>
+
+=back
+
+=head1 AUTHOR
+
+Toru Yamaguchi E<lt>zigorou at cpan.orgE<gt>
+
+=head1 LICENSE AND COPYRIGHT
+
+Copyright (c) 2012, <<YOUR NAME HERE>>. All rights reserved.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut

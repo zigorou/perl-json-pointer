@@ -1,5 +1,6 @@
 package JSON::Pointer::Context;
 
+use 5.008_001;
 use strict;
 use warnings;
 use Class::Accessor::Lite (
@@ -17,6 +18,8 @@ use Class::Accessor::Lite (
           /
       ],
 );
+
+our $VERSION = "0.01";
 
 sub new {
     my $class = shift;
@@ -48,3 +51,60 @@ sub next {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+JSON::Pointer::Context - Internal context object to process JSON Pointer
+
+=head1 VERSION
+
+This document describes JSON::Pointer::Context version 0.01.
+
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+This module is internal only.
+
+=head1 METHODS
+
+=head2 new(%args) : JSON::Pointer::Context
+
+=head2 begin($token)
+
+=head2 next($target)
+
+=head1 DEPENDENCIES
+
+Perl 5.8.1 or later.
+
+=head1 BUGS
+
+All complex software has bugs lurking in it, and this module is no
+exception. If you find a bug please either email me, or add the bug
+to cpan-RT.
+
+=head1 SEE ALSO
+
+=over
+
+=item L<perl>
+
+=item L<Class::Accessor::Lite>
+
+=back
+
+=head1 AUTHOR
+
+Toru Yamaguchi E<lt>zigorou at cpan.orgE<gt>
+
+=head1 LICENSE AND COPYRIGHT
+
+Copyright (c) 2012, <<YOUR NAME HERE>>. All rights reserved.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
