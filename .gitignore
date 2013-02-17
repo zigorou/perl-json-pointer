@@ -10,6 +10,9 @@ inc/
 *.def
 Makefile*
 !Makefile.PL
+Build*
+!Build.PL
+_build/
 *blib
 MYMETA.*
 *.out

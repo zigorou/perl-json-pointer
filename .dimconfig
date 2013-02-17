@@ -1,8 +1,0 @@
-#!perl
-# This file is managed by /Users/yamaguchi.toru/perl5/perlbrew/perls/perl-5.14.2/bin/dim.
-{
-  dist => 'JSON::Pointer',
-  distdir => 'JSON-Pointer',
-  module => 'JSON::Pointer',
-  template => 'Default'
-}

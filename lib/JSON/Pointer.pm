@@ -319,20 +319,24 @@ This document describes JSON::Pointer version 0.01.
 
 =head1 SYNOPSIS
 
+  use JSON;
   use JSON::Pointer;
 
-  my $obj = {
-    "foo"  => [ "bar", "baz" ],
-    ""     => 0,
-    "a/b"  => 1,
-    "c\%d" => 2,
-    "e^f"  => 3,
-    "g|h"  => 4,
-    "i\\j" => 5,
-    "k\"l" => 6,
-    " "    => 7,
-    "m~n"  => 8
-  };
+  my $json = JSON->new->allow_nonref;
+  my $obj = $json->decode(<< 'JSON');
+  {
+     "foo": ["bar", "baz"],
+     "": 0,
+     "a/b": 1,
+     "c%d": 2,
+     "e^f": 3,
+     "g|h": 4,
+     "i\\j": 5,
+     "k\"l": 6,
+     " ": 7,
+     "m~n": 8
+  }
+  JSON
 
   JSON::Pointer->get($obj, "/foo");   ### $obj->{foo}
   JSON::Pointer->get($obj, "/foo/0"); ### $obj->{foo}[0]
@@ -350,27 +354,232 @@ Please see the both of specifications for details.
 
 =head1 METHODS
 
+=head2 get($document :HashRef/ArrayRef/Scalar, $pointer :Str, $strict :Int) :Scalar
+
+=over
+
+=item $document :HashRef/ArrayRef/Scalar
+
+Target perl data structure that is able to be presented by JSON format.
+
+=item $pointer :Str
+
+JSON Pointer string to identify specified value in the document.
+
+=item $strict :Int
+
+Strict mode. When this value equals true value, this method may throw exception on error.
+When this value equals false value, this method return undef value on error.
+
+=back
+
+Get specified value identified by I<$pointer> from I<$document>.
+For example,
+
+  use JSON::Pointer;
+  print JSON::Pointer->get({ foo => 1, bar => { "qux" => "hello" } }, "/bar/qux"); ### hello
+
+=head2 contains($document :HashRef/ArrayRef/Scalar, $pointer :Str) :Int
+
+=over
+
+=item $document :HashRef/ArrayRef/Scalar
+
+Target perl data structure that is able to present by JSON format.
+
+=item $pointer :Str
+
+JSON Pointer string to identify specified value in the document.
+
+=back
+
+Return which the target location identified by I<$pointer> exists or not in the I<$document>.
+
+  use JSON::Pointer;
+
+  my $document = { foo => 1 };
+  if (JSON::Pointer->contains($document, "/foo")) {
+    print "/foo exists";
+  }
+
+=head2 add($document :HashRef/ArrayRef/Scalar, $pointer :Str, $value :HashRef/ArrayRef/Scalar) :HashRef/ArrayRef/Scalar
+
+=over
+
+=item $document :HashRef/ArrayRef/Scalar
+
+Target perl data structure that is able to be presented by JSON format.
+
+=item $pointer :Str
+
+JSON Pointer string to identify specified value in the document.
+
+=item $value :HashRef/ArrayRef/Scalar
+
+The perl data structure that is able to be presented by JSON format.
+
+=back
+
+Add specified I<$value> on target location identified by I<$pointer> in the I<$document>.
+For example, 
+
+  use JSON::Pointer;
+
+  my $document = +{ foo => 1, };
+  my $value = +{ qux => "hello" };
+
+  my $patched_document = JSON::Pointer->add($document, "/bar", $value);
+  print $patched_document->{bar}{qux}; ### hello
+
+=head2 remove($document, $pointer) :Array/Scalar
+
+=over
+
+=item $document :HashRef/ArrayRef/Scalar
+
+Target perl data structure that is able to be presented by JSON format.
+
+=item $pointer :Str
+
+JSON Pointer string to identify specified value in the document.
+
+=back
+
+Remove target location identified by I<$pointer> in the I<$document>.
+
+  use JSON::Pointer;
+
+  my $document = { foo => 1 };
+  my $patched_document = JSON::Pointer->remove($document, "/foo");
+  unless (exists $patched_document->{foo}) {
+    print "removed /foo";
+  }
+
+This method is contextial return value. When the return value of I<wantarray> equals true,
+return I<$patched_document> and I<$removed_value>, or not return I<$patched_document> only.
+
+=head2 replace($document :HashRef/ArrayRef/Scalar, $pointer :Str, $value :HashRef/ArrayRef/Scalar) :Array/HashRef/ArrayRef/Scalar
+
+=over
+
+=item $document :HashRef/ArrayRef/Scalar
+
+Target perl data structure that is able to be presented by JSON format.
+
+=item $pointer :Str
+
+JSON Pointer string to identify specified value in the document.
+
+=item $value :HashRef/ArrayRef/Scalar
+
+The perl data structure that is able to be presented by JSON format.
+
+=back
+
+Replace the value of target location specified by I<$pointer> to the I<$value> in the I<$document>.
+
+  use JSON::Pointer;
+
+  my $document = { foo => 1 };
+  my $patched_document = JSON::Pointer->replace($document, "/foo", 2);
+  print $patched_document->{foo}; ## 2
+
+This method is contextial return value. When the return value of I<wantarray> equals true,
+return I<$patched_document> and I<$replaced_value>, or not return I<$patched_document> only.
+
+=head2 set($document :HashRef/ArrayRef/Scalar, $pointer :Str, $value :HashRef/ArrayRef/Scalar) :Array/HashRef/ArrayRef/Scalar
+
+This method is alias of replace method.
+
+=head2 copy($document :HashRef/ArrayRef/Scalar, $from_pointer :Str, $to_pointer :Str) :HashRef/ArrayRef/Scalar
+
+=over
+
+=item $document :HashRef/ArrayRef/Scalar
+
+Target perl data structure that is able to be presented by JSON format.
+
+=item $from_pointer :Str
+
+JSON Pointer string to identify specified value in the document.
+
+=item $to_pointer :Str
+
+JSON Pointer string to identify specified value in the document.
+
+=back
+
+Copy the value identified by I<$from_pointer> to target location identified by I<$to_pointer>.
+For example,
+
+  use JSON::Pointer;
+
+  my $document = +{ foo => [ { qux => "hello" } ], bar => [ 1 ] };
+  my $patched_document = JSON::Pointer->copy($document, "/foo/0/qux", "/bar/-");
+  print $patched_document->{bar}[1]; ## hello
+
+Note that "-" notation means next of last element in the array.
+In this example, "-" means 1.
+
+=head2 move($document :HashRef/ArrayRef/Scalar, $from_pointer :Str, $to_pointer :Str) :HashRef/ArrayRef/Scalar
+
+=over
+
+=item $document :HashRef/ArrayRef/Scalar
+
+Target perl data structure that is able to be presented by JSON format.
+
+=item $from_pointer :Str
+
+JSON Pointer string to identify specified value in the document.
+
+=item $to_pointer :Str
+
+JSON Pointer string to identify specified value in the document.
+
+=back
+
+Move the value identified by I<$from_pointer> to target location identified by I<$to_pointer>.
+For example,
+
+  use JSON;
+  use JSON::Pointer;
+
+  my $document = +{ foo => [ { qux => "hello" } ], bar => [ 1 ] };
+  my $patched_document = JSON::Pointer->move($document, "/foo/0/qux", "/bar/-");
+  print encode_json($patched_document); ## {"bar":[1,"hello"],"foo":[{}]}
+
+=head2 test($document :HashRef/ArrayRef/Scalar, $pointer :Str, $value :HashRef/ArrayRef/Scalar) :Int
+
+=over
+
+=item $document :HashRef/ArrayRef/Scalar
+
+Target perl data structure that is able to be presented by JSON format.
+
+=item $pointer :Str
+
+JSON Pointer string to identify specified value in the document.
+
+=item $value :HashRef/ArrayRef/Scalar
+
+The perl data structure that is able to be presented by JSON format.
+
+=back
+
+Return which the value identified by I<$pointer> equals I<$value> or not in the I<$document>.
+This method distinguish type of each values.
+
+  use JSON::Pointer;
+
+  my $document = { foo => 1 };
+
+  print JSON::Pointer->test($document, "/foo", 1); ### 1
+  print JSON::Pointer->test($document, "/foo", "1"); ### 0
+
 =head2 traverse($document, $pointer, $strict) : JSON::Pointer::Context
 
-=head2 get($document, $pointer, $strict) : Scalar
-
-=head2 contains($document, $pointer) : Int
-
-=head2 add($document, $pointer, $value) : Scalar
-
-=head2 remove($document, $pointer) : Array or Scalar
-
-=head2 replace($document, $pointer, $value) : Arrary or Scalar
-
-=head2 set($document, $pointer, $value) : Array or Scalar
-
-This method is alias of replace.
-
-=head2 copy($document, $from_pointer, $to_pointer) : Scalar
-
-=head2 move($document, $from_pointer, $to_pointer) : Scalar
-
-=head2 test($document, $pointer, $value) : Int
+This method is used as internal implementation only.
 
 =head1 DEPENDENCIES
 
@@ -392,7 +601,9 @@ to cpan-RT.
 
 Many codes in this module is inspired by the module.
 
-=item L<http://tools.ietf.org/html/draft-ietf-appsawg-json-pointer-05>
+=item L<http://tools.ietf.org/html/draft-ietf-appsawg-json-pointer-09>
+
+=item L<http://tools.ietf.org/html/draft-ietf-appsawg-json-patch-10>
 
 =back
 
