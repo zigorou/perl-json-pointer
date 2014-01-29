@@ -14,9 +14,9 @@ sub test_copy {
     subtest $desc => sub {
         my ($document, $from_pointer, $to_pointer) = @$input{qw/document from path/};
         my $patched_document = JSON::Pointer->copy($document, $from_pointer, $to_pointer);
-        is(
-            $json->encode($patched_document),
-            $json->encode($expect->{patched}),
+        is_deeply(
+            $patched_document,
+            $expect->{patched},
             sprintf(
                 "copied document (actual: %s. expected: %s)",
                 $json->encode($patched_document),

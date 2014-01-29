@@ -15,18 +15,18 @@ sub test_replace {
         my ($document, $pointer, $value) = @$input{qw/document pointer value/};
         my ($patched_document, $replaced) = JSON::Pointer->replace($document, $pointer, $value);
 
-        is(
-            $json->encode($patched_document), 
-            $json->encode($expect->{document}), 
+        is_deeply(
+            $patched_document,
+            $expect->{document},
             sprintf(
                 "replaced document (actual: %s. expect: %s)",
                 $json->encode($patched_document),
                 $json->encode($expect->{document}),
             )
         );
-        is(
-            $json->encode($replaced), 
-            $json->encode($expect->{replaced}), 
+        is_deeply(
+            $replaced,
+            $expect->{replaced},
             sprintf(
                 "replaced element (actual: %s. expect: %s)",
                 $json->encode($replaced),
