@@ -15,18 +15,16 @@ sub test_add {
 
     subtest $desc => sub {
         my ($document, $pointer, $value) = @$input{qw/document pointer value/};
-        my $orig_document_encoded = encode_json($document);
         my $patched_document = JSON::Pointer->add($document, $pointer, $value);
-        is(
-            encode_json($patched_document), 
-            encode_json($expect->{patched}), 
+        is_deeply(
+            $patched_document,
+            $expect->{patched},
             sprintf(
-                "added document (actual: %s. expected: %s)", 
-                encode_json($patched_document), 
+                "added document (actual: %s. expected: %s)",
+                encode_json($patched_document),
                 encode_json($expect->{patched})
             )
         );
-        # is_deeply($document, $expect->{patched}, "patched");
     };
 }
 

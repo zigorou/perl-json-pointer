@@ -14,18 +14,18 @@ sub test_remove {
     subtest $desc => sub {
         my ($document, $pointer) = @$input{qw/document pointer/};
         my ($patched_document, $removed) = JSON::Pointer->remove($document, $pointer);
-        is(
-            $json->encode($patched_document), 
-            $json->encode($expect->{document}), 
+        is_deeply(
+            $patched_document,
+            $expect->{document},
             sprintf(
                 "removed document (actual: %s. expect: %s)",
                 $json->encode($patched_document),
                 $json->encode($expect->{document}),
             )
         );
-        is(
-            $json->encode($removed), 
-            $json->encode($expect->{removed}), 
+        is_deeply(
+            $removed,
+            $expect->{removed},
             sprintf(
                 "removed element (actual: %s. expect: %s)",
                 $json->encode($removed),
