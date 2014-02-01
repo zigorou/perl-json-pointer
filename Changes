@@ -1,7 +1,11 @@
 Revision history for Perl extension JSON::Pointer
 
-0.02  Sat Feb  1 19:18:45 JST 2014
+0.02  Sat Feb  1 19:51:14 JST 2014
     - Fixed RT 87314 (https://rt.cpan.org/Public/Bug/Display.html?id=87314)
+        * Patched by aoneko++(https://github.com/aoneko)
+    - Fixed RT 89773 (https://rt.cpan.org/Ticket/Display.html?id=89773)
+        * [Important changes] 0.02 use Clone module instead of Data::Clone.
+    - Support cpanfile by minil 
 
 0.01  Mon Feb 18 00:32:55 JST 2013
     - original version
