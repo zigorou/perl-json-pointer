@@ -4,7 +4,7 @@ JSON::Pointer - A Perl implementation of JSON Pointer (RFC6901)
 
 # VERSION
 
-This document describes JSON::Pointer version 0.02.
+This document describes JSON::Pointer version 0.03.
 
 # SYNOPSIS
 

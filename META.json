@@ -45,7 +45,9 @@
          "requires" : {
             "B" : "1.29",
             "Carp" : "1.20",
+            "Class::Accessor::Lite" : "0.05",
             "Clone" : "0.36",
+            "Exporter" : "0",
             "JSON" : "2.53",
             "URI::Escape" : "3.31",
             "perl" : "5.008001"
@@ -70,7 +72,7 @@
          "web" : "https://github.com/zigorou/perl-json-pointer"
       }
    },
-   "version" : "0.02",
+   "version" : "0.03",
    "x_contributors" : [
       "aoneko <aoneko.ether@gmail.com>",
       "zigorou <zigorou@cpan.org>"

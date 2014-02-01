@@ -19,7 +19,7 @@ use Class::Accessor::Lite (
       ],
 );
 
-our $VERSION = "0.02";
+our $VERSION = "0.03";
 
 sub new {
     my $class = shift;
@@ -60,7 +60,7 @@ JSON::Pointer::Context - Internal context object to process JSON Pointer
 
 =head1 VERSION
 
-This document describes JSON::Pointer::Context version 0.02.
+This document describes JSON::Pointer::Context version 0.03.
 
 =head1 SYNOPSIS
 
