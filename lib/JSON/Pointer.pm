@@ -6,14 +6,14 @@ use warnings;
 
 use B;
 use Carp qw(croak);
-use Data::Clone qw(clone);
+use Clone qw(clone);
 use JSON qw(encode_json decode_json);
 use JSON::Pointer::Context;
 use JSON::Pointer::Exception qw(:all);
 use JSON::Pointer::Syntax qw(is_array_numeric_index);
 use URI::Escape qw(uri_unescape);
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 sub traverse {
     my ($class, $document, $pointer, $strict) = @_;
@@ -311,11 +311,11 @@ __END__
 
 =head1 NAME
 
-JSON::Pointer - A Perl implementation of JSON Pointer
+JSON::Pointer - A Perl implementation of JSON Pointer (RFC6901)
 
 =head1 VERSION
 
-This document describes JSON::Pointer version 0.01.
+This document describes JSON::Pointer version 0.02.
 
 =head1 SYNOPSIS
 
@@ -335,11 +335,11 @@ This document describes JSON::Pointer version 0.01.
 
 =head1 DESCRIPTION
 
-This library is implemented JSON Pointer draft-09 (http://tools.ietf.org/html/draft-ietf-appsawg-json-pointer-09) and 
-some useful operator from JSON Patch draft-10 (http://tools.ietf.org/html/draft-ietf-appsawg-json-patch-10).
+This library is implemented JSON Pointer (L<http://tools.ietf.org/html/rfc6901>) and 
+some useful operator from JSON Patch (L<http://tools.ietf.org/html/rfc6902>).
 
-JSON Pointer is available to identify a specified value, and it is simillar to XPath.
-Please see the both of specifications for details.
+JSON Pointer is available to identify a specified value in JSON document, and it is simillar to XPath.
+Please read the both of specifications for details.
 
 =head1 METHODS
 
@@ -590,9 +590,9 @@ to cpan-RT.
 
 Many codes in this module is inspired by the module.
 
-=item L<http://tools.ietf.org/html/draft-ietf-appsawg-json-pointer-09>
+=item L<http://tools.ietf.org/html/rfc6901>
 
-=item L<http://tools.ietf.org/html/draft-ietf-appsawg-json-patch-10>
+=item L<http://tools.ietf.org/html/rfc6902>
 
 =back
 
