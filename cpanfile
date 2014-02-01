@@ -8,6 +8,6 @@ requires 'URI::Escape' => '3.31';
 
 on 'test' => sub {
     requires 'Test::More', '0.98';
-    required 'Test::Exception', '0.31';
+    requires 'Test::Exception', '0.31';
 };
 

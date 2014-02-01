@@ -1,10 +1,10 @@
 {
-   "abstract" : "It's new $module",
+   "abstract" : "A Perl implementation of JSON Pointer (RFC6901)",
    "author" : [
-      "zigorou <zigorou@cpan.org>"
+      "Toru Yamaguchi <zigorou at cpan.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Minilla/v0.7.5, CPAN::Meta::Converter version 2.130870",
+   "generated_by" : "Minilla/v0.11.0, CPAN::Meta::Converter version 2.130870",
    "license" : [
       "perl_5"
    ],
@@ -43,15 +43,36 @@
       },
       "runtime" : {
          "requires" : {
-            "perl" : "5.008005"
+            "B" : "1.29",
+            "Carp" : "1.20",
+            "Clone" : "0.36",
+            "JSON" : "2.53",
+            "URI::Escape" : "3.31",
+            "perl" : "5.008001"
          }
       },
       "test" : {
          "requires" : {
+            "Test::Exception" : "0.31",
             "Test::More" : "0.98"
          }
       }
    },
    "release_status" : "unstable",
-   "version" : "0.01"
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/zigorou/perl-json-pointer/issues"
+      },
+      "homepage" : "https://github.com/zigorou/perl-json-pointer",
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/zigorou/perl-json-pointer.git",
+         "web" : "https://github.com/zigorou/perl-json-pointer"
+      }
+   },
+   "version" : "0.02",
+   "x_contributors" : [
+      "aoneko <aoneko.ether@gmail.com>",
+      "zigorou <zigorou@cpan.org>"
+   ]
 }
