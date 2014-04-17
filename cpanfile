@@ -1,6 +1,6 @@
 requires 'perl', '5.008001';
 
-requires 'B' => '1.29';
+requires 'B';
 requires 'Carp' => '1.20';
 requires 'Class::Accessor::Lite' => '0.05';
 requires 'Clone' => '0.36';
