@@ -8,7 +8,7 @@ use Exporter qw(import);
 use JSON::Pointer::Context;
 use JSON::Pointer::Exception qw(:all);
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 our @EXPORT_OK = qw(
     escape_reference_token
     unescape_reference_token
@@ -87,7 +87,7 @@ JSON::Pointer::Syntax - JSON Pointer syntax functions
 
 =head1 VERSION
 
-This document describes JSON::Pointer::Syntax version 0.03.
+This document describes JSON::Pointer::Syntax version 0.04.
 
 =head1 SYNOPSIS
 

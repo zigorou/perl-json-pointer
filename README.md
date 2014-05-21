@@ -4,7 +4,7 @@ JSON::Pointer - A Perl implementation of JSON Pointer (RFC6901)
 
 # VERSION
 
-This document describes JSON::Pointer version 0.03.
+This document describes JSON::Pointer version 0.04.
 
 # SYNOPSIS
 
@@ -239,8 +239,8 @@ to cpan-RT.
 
 # SEE ALSO
 
-- [perl](http://search.cpan.org/perldoc?perl)
-- [Mojo::JSON::Pointer](http://search.cpan.org/perldoc?Mojo::JSON::Pointer)
+- [perl](https://metacpan.org/pod/perl)
+- [Mojo::JSON::Pointer](https://metacpan.org/pod/Mojo::JSON::Pointer)
 
     Many codes in this module is inspired by the module.
 

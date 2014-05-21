@@ -1,5 +1,11 @@
 Revision history for Perl extension JSON::Pointer
 
+{{$NEXT}}
+
+0.04  Wed May 21 16:18:53 JST 2014
+
+    - Remove dependency of B version
+
 0.03  Sat Feb  1 23:05:38 JST 2014
 
     - Fixed cpanfile

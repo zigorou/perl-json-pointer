@@ -24,3 +24,8 @@ cover_db/
 MYMETA.*
 
 /JSON-Pointer-*
+/.build
+/_build_params
+/Build.bat
+!Build/
+!META.json
