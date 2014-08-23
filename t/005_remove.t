@@ -2,8 +2,11 @@ use strict;
 use warnings;
 
 use Test::More;
+use Test::Exception;
+use Carp;
 use JSON;
 use JSON::Pointer;
+use JSON::Pointer::Exception qw(:all);
 
 my $json = JSON->new->allow_nonref;
 
@@ -32,6 +35,25 @@ sub test_remove {
                 $json->encode($expect->{removed}),
             )
         );
+    };
+}
+
+sub test_remove_exception {
+    my ($desc, %specs) = @_;
+    my ($input, $expect) = @specs{qw/input expect/};
+
+    subtest $desc => sub {
+        my ($document, $pointer) = @$input{qw/document pointer/};
+		my $code = $expect->{code};
+        throws_ok {
+            eval {
+                my $patched_document = JSON::Pointer->remove($document, $pointer);
+            };
+            if (my $e = $@) {
+                is($e->code, $code, "code");
+                croak $e;
+            }
+        } "JSON::Pointer::Exception" => "throws_ok";
     };
 }
 
@@ -147,6 +169,16 @@ subtest "misc" => sub {
         expect => +{
             removed => 2,
             document => [0, 1, 3],
+        },
+    );
+
+    test_remove_exception "remove non-existent target location" => (
+        input => +{
+            document => [0, 1],
+            pointer => "/2",
+        },
+        expect => +{
+            code => ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE
         },
     );
 };
