@@ -2,7 +2,11 @@ Revision history for Perl extension JSON::Pointer
 
 {{$NEXT}}
 
-0.04 2014-05-21T07:32:53Z
+0.05 2014-09-01T11:36:15Z
+
+    - Improve method behavior to RFC6902 (https://github.com/zigorou/perl-json-pointer/pull/6)
+
+0.04  2014-05-21T07:32:53Z
 
     - Remove dependency of B version
 

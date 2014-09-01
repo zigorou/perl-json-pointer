@@ -4,7 +4,7 @@
       "Toru Yamaguchi <zigorou at cpan.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Minilla/v1.0.0, CPAN::Meta::Converter version 2.120921",
+   "generated_by" : "Minilla/v1.0.0, CPAN::Meta::Converter version 2.141520",
    "license" : [
       "perl_5"
    ],
@@ -73,10 +73,11 @@
          "web" : "https://github.com/zigorou/perl-json-pointer"
       }
    },
-   "version" : "0.04",
+   "version" : "0.05",
    "x_contributors" : [
       "aoneko <aoneko.ether@gmail.com>",
       "Kensaku Araga <ken39arg@gmail.com>",
+      "Ichito Nagata <i.nagata110@gmail.com>",
       "Toru Yamaguchi <zigorou@cpan.org>"
    ]
 }

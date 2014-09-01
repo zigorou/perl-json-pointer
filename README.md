@@ -4,7 +4,7 @@ JSON::Pointer - A Perl implementation of JSON Pointer (RFC6901)
 
 # VERSION
 
-This document describes JSON::Pointer version 0.04.
+This document describes JSON::Pointer version 0.05.
 
 # SYNOPSIS
 
@@ -223,7 +223,7 @@ This method distinguish type of each values.
     print JSON::Pointer->test($document, "/foo", 1); ### 1
     print JSON::Pointer->test($document, "/foo", "1"); ### 0
 
-## traverse($document, $pointer, $strict) : JSON::Pointer::Context
+## traverse($document, $pointer, $opts) : JSON::Pointer::Context
 
 This method is used as internal implementation only.
 
