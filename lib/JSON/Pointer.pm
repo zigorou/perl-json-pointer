@@ -16,8 +16,12 @@ use URI::Escape qw(uri_unescape);
 our $VERSION = '0.04';
 
 sub traverse {
-    my ($class, $document, $pointer, $strict) = @_;
-    $strict = 1 unless defined $strict;
+    my ($class, $document, $pointer, $opts) = @_;
+    $opts = +{
+        strict => 1,
+        inclusive => 0,
+        %{ $opts || +{} }
+    };
     $pointer = uri_unescape($pointer);
 
     my @tokens  = JSON::Pointer::Syntax->tokenize($pointer);
@@ -36,29 +40,30 @@ sub traverse {
 
         if ($type eq "HASH") {
             unless (exists $parent->{$token}) {
-                return _throw_or_return(ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE, $context, $strict);
+                return _throw_or_return(ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE, $context, $opts->{strict});
             }
 
             $context->next($parent->{$token});
             next;
         }
         elsif ($type eq "ARRAY") {
-            my $elements_length = $#{$parent} + 1;
+            if ($token eq '-') {
+                $token = $#{$parent} + 1;
+            }
 
-            if (is_array_numeric_index($token) && $token <= $elements_length) {
+            my $max_index = $#{$parent};
+            $max_index++ if $opts->{inclusive};
+
+            if (is_array_numeric_index($token) && $token <= $max_index) {
                 $context->next($parent->[$token]);
                 next;
             }
-            elsif ($token eq "-") {
-                $context->next(undef);
-                next;
-            }
             else {
-                return _throw_or_return(ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE, $context, $strict);
+                return _throw_or_return(ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE, $context, $opts->{strict});
             }
         }
         else {
-            return _throw_or_return(ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE, $context, $strict);
+            return _throw_or_return(ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE, $context, $opts->{strict});
         }
     }
 
@@ -72,7 +77,7 @@ sub get {
 
     my $context;
     eval {
-        $context = $class->traverse($document, $pointer, $strict);
+        $context = $class->traverse($document, $pointer, +{ strict => $strict });
     };
     if (my $e = $@) {
         croak $e;
@@ -83,7 +88,7 @@ sub get {
 
 sub contains {
     my ($class, $document, $pointer) = @_;
-    my $context = $class->traverse($document, $pointer, 0);
+    my $context = $class->traverse($document, $pointer, +{ strict => 0 });
     return $context->result;
 }
 
@@ -92,7 +97,7 @@ sub add {
 
     my $patched_document = clone($document);
 
-    my $context = $class->traverse($patched_document, $pointer, 0);
+    my $context = $class->traverse($patched_document, $pointer, +{ strict => 0, inclusive => 1 });
     my $parent  = $context->parent;
     my $type    = ref $parent;
 
@@ -153,7 +158,7 @@ sub remove {
 
     my $patched_document = clone($document);
 
-    my $context = $class->traverse($patched_document, $pointer, 1);
+    my $context = $class->traverse($patched_document, $pointer);
     my $parent  = $context->parent;
     my $type    = ref $parent;
 
@@ -197,7 +202,7 @@ sub replace {
     my ($class, $document, $pointer, $value) = @_;
 
     my $patched_document = clone($document);
-    my $context = $class->traverse($patched_document, $pointer, 1);
+    my $context = $class->traverse($patched_document, $pointer);
     my $parent  = $context->parent;
     my $type    = ref $parent;
 
@@ -235,7 +240,7 @@ sub set {
 
 sub copy {
     my ($class, $document, $from_pointer, $to_pointer) = @_;
-    my $context = $class->traverse($document, $from_pointer, 1);
+    my $context = $class->traverse($document, $from_pointer);
     return $class->add($document, $to_pointer, $context->target);
 }
 
@@ -248,7 +253,7 @@ sub move {
 sub test {
     my ($class, $document, $pointer, $value) = @_;
 
-    my $context = $class->traverse($document, $pointer, 0);
+    my $context = $class->traverse($document, $pointer, +{ strict => 0 });
 
     return 0 unless $context->result;
 
@@ -566,7 +571,7 @@ This method distinguish type of each values.
   print JSON::Pointer->test($document, "/foo", 1); ### 1
   print JSON::Pointer->test($document, "/foo", "1"); ### 0
 
-=head2 traverse($document, $pointer, $strict) : JSON::Pointer::Context
+=head2 traverse($document, $pointer, $opts) : JSON::Pointer::Context
 
 This method is used as internal implementation only.
 

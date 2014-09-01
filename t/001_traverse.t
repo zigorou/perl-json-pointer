@@ -27,7 +27,7 @@ sub test_traverse {
     my ($input, $expect) = @specs{qw/input expect/};
 
     subtest $desc => sub {
-        my $context = JSON::Pointer->traverse($document, $input, 0);
+        my $context = JSON::Pointer->traverse($document, $input, +{ strict => 0 });
 
         is($context->result, $expect->{result}, "result");
         is($context->last_token, $expect->{last_token}, "last_token");

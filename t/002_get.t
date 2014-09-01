@@ -42,7 +42,7 @@ sub test_get_exception {
     subtest $desc => sub {
         throws_ok {
             eval {
-                JSON::Pointer->get($document, $input, 1);
+                JSON::Pointer->get($document, $input, +{ strict => 1 });
             };
             if (my $e = $@) {
                 is($e->context->last_token, $expect->{last_token}, "last_token");
