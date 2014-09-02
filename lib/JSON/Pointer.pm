@@ -301,13 +301,13 @@ sub _throw_or_return {
 sub _is_iv_or_nv {
     my $value = shift;
     my $flags = B::svref_2object(\$value)->FLAGS;
-    return ($flags & ( B::SVp_IOK | B::SVp_NOK )) and !($flags & B::SVp_POK);
+    return ( ($flags & ( B::SVp_IOK | B::SVp_NOK )) and !($flags & B::SVp_POK) );
 }
 
 sub _is_pv {
     my $value = shift;
     my $flags = B::svref_2object(\$value)->FLAGS;
-    return !($flags & ( B::SVp_IOK | B::SVp_NOK )) and ($flags & B::SVp_POK);
+    return ( !($flags & ( B::SVp_IOK | B::SVp_NOK )) and ($flags & B::SVp_POK) );
 }
 
 1;
