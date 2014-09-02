@@ -2,6 +2,10 @@ Revision history for Perl extension JSON::Pointer
 
 {{$NEXT}}
 
+0.06 2014-09-02T14:09:32Z
+
+    - Improve JSON primitive type detection (https://github.com/zigorou/perl-json-pointer/pull/7)
+
 0.05 2014-09-01T11:36:15Z
 
     - Improve method behavior to RFC6902 (https://github.com/zigorou/perl-json-pointer/pull/6)

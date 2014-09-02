@@ -73,11 +73,12 @@
          "web" : "https://github.com/zigorou/perl-json-pointer"
       }
    },
-   "version" : "0.05",
+   "version" : "0.06",
    "x_contributors" : [
       "aoneko <aoneko.ether@gmail.com>",
       "Kensaku Araga <ken39arg@gmail.com>",
       "Ichito Nagata <i.nagata110@gmail.com>",
+      "Hiroyoshi Houchi <git@hixi-hyi.com>",
       "Toru Yamaguchi <zigorou@cpan.org>"
    ]
 }

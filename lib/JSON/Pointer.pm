@@ -13,7 +13,7 @@ use JSON::Pointer::Exception qw(:all);
 use JSON::Pointer::Syntax qw(is_array_numeric_index);
 use URI::Escape qw(uri_unescape);
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 sub traverse {
     my ($class, $document, $pointer, $opts) = @_;
@@ -320,7 +320,7 @@ JSON::Pointer - A Perl implementation of JSON Pointer (RFC6901)
 
 =head1 VERSION
 
-This document describes JSON::Pointer version 0.05.
+This document describes JSON::Pointer version 0.06.
 
 =head1 SYNOPSIS
 

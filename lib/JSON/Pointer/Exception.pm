@@ -10,7 +10,7 @@ use overload (
 use Carp ();
 use Exporter qw(import);
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 our @EXPORT_OK = qw(
    ERROR_INVALID_POINTER_SYNTAX
    ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE
@@ -65,7 +65,7 @@ JSON::Pointer::Exception - Exception class for JSON::Pointer
 
 =head1 VERSION
 
-This document describes JSON::Pointer::Exception version 0.05
+This document describes JSON::Pointer::Exception version 0.06
 
 =head1 SYNOPSIS
 
