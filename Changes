@@ -2,6 +2,8 @@ Revision history for Perl extension JSON::Pointer
 
 {{$NEXT}}
 
+0.07 2015-08-13T09:02:56Z
+
     - Accept ARRAY in JSON::Pointer::Syntax::as_pointer()
     - Support Relative JSON Pointer in JSON::Pointer::get_relative()
     - Fixed issue (https://github.com/zigorou/perl-json-pointer/issues/8)

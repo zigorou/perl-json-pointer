@@ -4,7 +4,7 @@ JSON::Pointer - A Perl implementation of JSON Pointer (RFC6901)
 
 # VERSION
 
-This document describes JSON::Pointer version 0.06.
+This document describes JSON::Pointer version 0.07.
 
 # SYNOPSIS
 
@@ -52,6 +52,27 @@ For example,
 
     use JSON::Pointer;
     print JSON::Pointer->get({ foo => 1, bar => { "qux" => "hello" } }, "/bar/qux"); ### hello
+
+## get\_relative($document :HashRef/ArrayRef/Scalar, $current\_pointer :Str, $relative\_pointer :Str, $strict :Int) :Scalar
+
+**This method is highly EXPERIMENTAL**. Because this method depends on [http://tools.ietf.org/html/draft-luff-relative-json-pointer-00](http://tools.ietf.org/html/draft-luff-relative-json-pointer-00) draft spec.
+
+- $document :HashRef/ArrayRef/Scalar
+
+    Target perl data structure that is able to be presented by JSON format.
+
+- $current\_pointer : Str
+
+    JSON Pointer string to identify specified current position in the document.
+
+- $relative\_pointer : Str
+
+    JSON Relative Pointer string to identify specified value from current position in the document
+
+- $strict :Int
+
+    Strict mode. When this value equals true value, this method may throw exception on error.
+    When this value equals false value, this method return undef value on error.
 
 ## contains($document :HashRef/ArrayRef/Scalar, $pointer :Str) :Int
 
@@ -246,6 +267,7 @@ to cpan-RT.
 
 - [http://tools.ietf.org/html/rfc6901](http://tools.ietf.org/html/rfc6901)
 - [http://tools.ietf.org/html/rfc6902](http://tools.ietf.org/html/rfc6902)
+- [http://tools.ietf.org/html/draft-luff-relative-json-pointer-00](http://tools.ietf.org/html/draft-luff-relative-json-pointer-00)
 
 # AUTHOR
 
