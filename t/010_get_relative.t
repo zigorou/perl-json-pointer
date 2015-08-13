@@ -31,6 +31,25 @@ sub test_get_relative {
     };
 }
 
+sub test_get_relative_exception {
+    my ($desc, %specs) = @_;
+
+    my ($input, $expect) = @specs{qw/input expect/};
+
+    subtest $desc => sub {
+        throws_ok {
+            eval {
+                JSON::Pointer->get_relative($document, @$input, +{ strict => 1 });
+            };
+            if (my $e = $@) {
+                is($e->context->last_token, $expect->{last_token}, "last_token");
+                is($e->context->last_error, $expect->{last_error}, "last_error");
+                croak $e;
+            }
+        } "JSON::Pointer::Exception" => "throws_ok";
+    };
+}
+
 subtest "Reletive JSON Pointer examples in 5.1" => sub {
     subtest "current pointer is /foo/1" => sub {
         my $current_pointer = "/foo/1";
@@ -89,6 +108,24 @@ subtest "Reletive JSON Pointer examples in 5.1" => sub {
             expect => "highly",
         );
     };
+};
+
+subtest "Exceptions" => sub {
+    test_get_relative_exception "Invalid relative json pointer" => (
+        input => ["/foo/1", "/invalid"],
+        expect => +{
+            last_token => undef,
+            last_error => ERROR_INVALID_POINTER_SYNTAX,
+        },
+    );
+
+    test_get_relative_exception "Relative json pointer specified non reference value" => (
+        input => ["/foo/1", "3"],
+        expect => +{
+            last_token => undef,
+            last_error => ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE,
+        },
+    );
 };
 
 done_testing;
