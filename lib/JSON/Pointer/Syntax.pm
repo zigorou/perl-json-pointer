@@ -62,14 +62,14 @@ sub tokenize {
 }
 
 sub as_pointer {
-    my ($class, $tokens) = @_;
+    my $class = shift;
+    my @tokens = ref $_[0] eq "ARRAY" ? @$_[0] : @_;
 
-    return @$tokens > 0 ? "/" . join(
+    return @tokens > 0 ? "/" . join(
         "/", 
         map { escape_reference_token($_) }
-        @$tokens
+        @tokens
     ) : "";
-
 }
 
 sub is_array_numeric_index {
