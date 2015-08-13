@@ -86,6 +86,51 @@ sub get {
     return $context->result ? $context->target : undef;
 }
 
+sub get_relative {
+    my ($class, $document, $current_pointer, $relative_pointer, $strict) = @_;
+    $strict = 0 unless defined $strict;
+
+    my @current_tokens = JSON::Pointer::Syntax->tokenize($current_pointer);
+
+    my $context = JSON::Pointer::Context->new(+{
+        pointer => $current_pointer,
+        tokens  => \@current_tokens,
+        target  => $document,
+        parent  => $document,
+    });
+
+    my ($steps, $relative_pointer_suffix, $use_index) =
+        ($relative_pointer =~ m{^(0|[1-9]?[0-9]+)([^#]*)(#?)$});
+    $relative_pointer_suffix ||= "";
+
+    unless (defined $steps) {
+        return _throw_or_return(ERROR_INVALID_POINTER_SYNTAX, $context, +{ strict => $strict });
+    }
+
+    for (my $i = 0; $i < $steps; $i++) {
+        if (@current_tokens == 0) {
+            return _throw_or_return(ERROR_POINTER_REFERENCES_NON_EXISTENT_VALUE, $context, +{ strict => $strict });
+        }
+        pop(@current_tokens);
+    }
+
+    if ($use_index) {
+        my @relative_tokens = JSON::Pointer::Syntax->tokenize($relative_pointer_suffix);
+        return (@relative_tokens > 0) ? $relative_tokens[-1] : $current_tokens[-1];
+    }
+
+    my $absolute_pointer = JSON::Pointer::Syntax->as_pointer(@current_tokens) . $relative_pointer_suffix;
+
+    eval {
+        $context = $class->traverse($document, $absolute_pointer, +{ strict => $strict });
+    };
+    if (my $e = $@) {
+        croak $e;
+    }
+
+    return $context->result ? $context->target : undef;
+}
+
 sub contains {
     my ($class, $document, $pointer) = @_;
     my $context = $class->traverse($document, $pointer, +{ strict => 0 });
@@ -373,6 +418,32 @@ For example,
   use JSON::Pointer;
   print JSON::Pointer->get({ foo => 1, bar => { "qux" => "hello" } }, "/bar/qux"); ### hello
 
+=head2 get_relative($document :HashRef/ArrayRef/Scalar, $current_pointer :Str, $relative_pointer :Str, $strict :Int) :Scalar
+
+B<This method is highly EXPERIMENTAL>. Because this method depends on L<http://tools.ietf.org/html/draft-luff-relative-json-pointer-00> draft spec.
+
+=over
+
+=item $document :HashRef/ArrayRef/Scalar
+
+Target perl data structure that is able to be presented by JSON format.
+
+=item $current_pointer : Str
+
+JSON Pointer string to identify specified current position in the document.
+
+=item $relative_pointer : Str
+
+JSON Relative Pointer string to identify specified value from current position in the document
+
+=item $strict :Int
+
+Strict mode. When this value equals true value, this method may throw exception on error.
+When this value equals false value, this method return undef value on error.
+
+
+=back
+
 =head2 contains($document :HashRef/ArrayRef/Scalar, $pointer :Str) :Int
 
 =over
@@ -598,6 +669,8 @@ Many codes in this module is inspired by the module.
 =item L<http://tools.ietf.org/html/rfc6901>
 
 =item L<http://tools.ietf.org/html/rfc6902>
+
+=item L<http://tools.ietf.org/html/draft-luff-relative-json-pointer-00>
 
 =back
 
