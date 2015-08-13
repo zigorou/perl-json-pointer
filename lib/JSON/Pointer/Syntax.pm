@@ -63,7 +63,7 @@ sub tokenize {
 
 sub as_pointer {
     my $class = shift;
-    my @tokens = ref $_[0] eq "ARRAY" ? @$_[0] : @_;
+    my @tokens = (ref $_[0] eq "ARRAY") ? @{$_[0]} : @_;
 
     return @tokens > 0 ? "/" . join(
         "/", 
