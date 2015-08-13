@@ -5,8 +5,12 @@ use JSON::Pointer::Syntax;
 
 sub test_as_pointer {
     my ($tokens, $expect, $desc) = @_;
-    my $actual = JSON::Pointer::Syntax->as_pointer($tokens);
-    is($actual, $expect, $desc);
+    subtest $desc => sub {
+        my $actual = JSON::Pointer::Syntax->as_pointer($tokens);
+        is($actual, $expect, "arrayref");
+        $actual = JSON::Pointer::Syntax->as_pointer(@$tokens);
+        is($actual, $expect, "array");
+    }
 }
 
 subtest "JSON Pointer Section 5 examples" => sub {
